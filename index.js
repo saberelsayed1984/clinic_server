@@ -5,7 +5,7 @@ import bodyParser from 'body-parser'
 import { config } from 'dotenv'
 import router from './router/route.js'
 import connect from './dataBase/connect.js'
-import routerUser from '../server/router/routerUser.js'
+import routerUser from './router/routerUser.js'
 import passport from 'passport';
 import * as passport_st from './controllers/passport.js'
 import  Session  from 'express-session';
