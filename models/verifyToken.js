@@ -5,13 +5,13 @@ import dotenv from "dotenv";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 dotenv.config({ path: path.join(__dirname, "../.env") });
-console.log(      process.env.JWT_SECRET_KEY    );
+// console.log(      process.env.JWT_SECRET_KEY    );
 function verifyToken(req, res, next) {
   if (
     req.headers.authorization &&
     req.headers.authorization.split(' ')[0] === 'Bearer'
   ) {
-    console.log(req.headers.authorization);
+    // console.log(req.headers.authorization);
     const decoded = 
     jwt.verify(
       req.headers.authorization.split(' ')[1],
