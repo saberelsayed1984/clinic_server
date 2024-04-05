@@ -15,16 +15,15 @@ import fs from "fs";
 import {cloudinaryUploadImage,cloudinaryRemoveImage} from "../utlits/cloudinary.js";
 const __filename = path.basename(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 export async function uplodePhoto(req, res) {
     const userId = req.params.id;
     const user = await User.findById(userId);
     if (!user) {
-        return res.status(404).json({ error: "User not found" });
+        return res.status(404).json({ msg: "User not found" });
     }
 
     if (!req.file) {
-        return res.status(400).json({ error: "file provided" });
+        return res.status(400).json({ msg: "file provided" });
     }
 
     const imagePath = path.join(__dirname, `./image/${req.file.filename}`);
@@ -43,7 +42,7 @@ export async function uplodePhoto(req, res) {
 
     res.status(200).json({
         error: false,
-        message: "successfully Upload",
+        msg: "successfully Upload",
         profilePhoto: { url: result.secure_url, publicId: result.public_id },
     });
 
@@ -91,14 +90,14 @@ export async function login(req, res, next)  {
     const { email, password } = req.body;
 
     if (!email && !password) {
-        return res.status(400).json({ error: "Email or Password is required" });
+        return res.status(400).json({ msg: "Email or Password is required" });
         
     }
 
     const user = await User.findOne({ email: email });
 
     if (!user) {
-        return res.status(400).json({ error: "User Not Found" });
+        return res.status(400).json({  msg: "User Not Found" });
 
     }
 
@@ -108,7 +107,7 @@ export async function login(req, res, next)  {
         const token = await genrateJwt({email: user.email, id: user._id})
         await User.updateOne({_id:user._id }, {$set:{token}})
         user.token = token
-        return res.json({ status: httpStatusText.SUCCESS, data: {user} });
+        return res.json({ status: httpStatusText.SUCCESS,  msg: {user} });
     } else {
         
         return res.status(500).json({ error: "The password is incorrect" });
@@ -118,10 +117,10 @@ export async function login(req, res, next)  {
 export async function update(req, res)  {
     const userId = req.params.userId; 
     const updateUser = await User.updateOne({_id: userId}, {$set:{...req.body}});
-    return res.status(200).json({status: httpStatusText.SUCCESS, data:{updateUser}})};
+    return res.status(200).json({status: httpStatusText.SUCCESS,  msg:{updateUser}})};
 export async function deleteUser(req, res) {
         await User.deleteOne ({_id: req.params.userId});
-        res.status(200).json({status: httpStatusText.SUCCESS, data: null});
+        res.status(200).json({status: httpStatusText.SUCCESS,  msg: null});
     };
 export async function forgotPassword(req, res, next) {
         const { error } = Joi.object({
@@ -132,7 +131,7 @@ export async function forgotPassword(req, res, next) {
         }   
         const user = await User.findOne({email: req.body.email});
         if (!user) {
-            return res.status(404).send('User not found');
+            return res.status(404).send( {msg:'User not found'});
         }
     const secret = process.env.JWT_SECRET_KEY + user.password;
     const token = jwt.sign({ email: user.email, id: user.id}, secret, {
@@ -166,13 +165,13 @@ export async function forgotPassword(req, res, next) {
 export async function getResetPassword(req, res, next) {
     const user = await User.findById(req.params.userId);
     if (!user) {
-        return res.status(404).send('User not found');
+        return res.status(404).send( {msg:'User not found'});
 
     }
 const secret = process.env.JWT_SECRET_KEY + user.password;
 try {
     jwt.verify(req.params.token, secret);
-    res.status(200).send({email: user.email, message: 'reset password'});
+    res.status(200).send({email: user.email,  msg: 'reset password'});
 } catch (error) {
     res.json(error.message).status(403)
 }
@@ -180,7 +179,7 @@ try {
 export async function resetPassword(req, res, next) {
     const user = await User.findById(req.params.userId);
     if (!user) {
-        return res.status(404).send('User not found');
+        return res.status(404).send( {msg:'User not found'});
 
     }
 const secret = process.env.JWT_SECRET_KEY + user.password;
@@ -190,7 +189,7 @@ try {
     req.body.password = await bcrypt.hash(req.body.password, salt);
     user.password = req.body.password;
     await user.save();
-    res.send('success new password');
+    res.send({ msg:'success new password'});
 } catch (error) {
     res.json(error.message).status(403)
 }
@@ -199,10 +198,10 @@ export async function callback(req, res) {
         if (req.user) {
             res.status(200).json({
                 error: false,
-                message: "successfully loged in",
+                msg: "successfully loged in",
                 user: req.user,
             });
         } else {
-            res.status(403).json({ error: true, message: "not authorized" });
+            res.status(403).json({ error: true,  msg: "not authorized" });
         }
         }

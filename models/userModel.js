@@ -10,6 +10,7 @@ const userModel = new Schema ({
         trim: true,
         minlength:[3,"Name must be longer than 3 chacater "],
         maxlenghth: [9,"Name must not be more than 3 chacater  "],
+        unique: true
     },
     email: {
         type:String,
@@ -21,7 +22,8 @@ const userModel = new Schema ({
         type:String,
         required: true,
         trim: true,
-        minlength: 8,
+        minlength:[8,"Name must be longer than 8 chacater "],
+        maxlenghth: [20,"Name must not be more than 20 chacater  "],
     },
     profilePhoto: {
         type: Object,
