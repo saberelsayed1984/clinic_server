@@ -8,9 +8,8 @@ const userModel = new Schema ({
         type: String,
         required: true,
         trim: true,
-        minlength: 5,
-        maxlenghth: 10,
-        unique: true
+        minlength:[3,"Name must be longer than 3 chacater "],
+        maxlenghth: [9,"Name must not be more than 3 chacater  "],
     },
     email: {
         type:String,

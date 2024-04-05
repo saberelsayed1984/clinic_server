@@ -1,7 +1,7 @@
 import httpStatusText from'../utlits/httpStatus.js';
+export async function getAll(req, res) {
+    res.json("welcom to home page");}
 export async function postDiabetes(req, res) {
-    
-
     let url = process.env.AI_MODEL_URL_Diabetes;
     const {Pregnancies, Glucose , BloodPressure
         , SkinThickness, Insulin, BMI

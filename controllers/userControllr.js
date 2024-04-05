@@ -1,12 +1,12 @@
 import passport from 'passport';
 import User from '../models/userModel.js';
 import httpStatusText from '../utlits/httpStatus.js';
-import AppError from '../utlits/appError.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import genrateJwt from '../utlits/genrateJwt.js';
 import nodemailer from "nodemailer";
 import Joi from "joi";
+import emailValidator from 'email-validator';
 import { token } from 'morgan';
 import path from "path";
 import multer from "multer";
@@ -54,10 +54,24 @@ export async function register(req, res, next)  {
     const oldUser = await User.findOne({ email: email });
     
     if (oldUser) {
-        const error = AppError.create('user Already exists', 400, httpStatusText.FAIL);
-        return next(error);
+        return res.status(400).json({ error: "User already exists" });
+
     }
-    
+    async function isEmailValid(email) {
+        const isValid = emailValidator.validate(email);
+        if (!isValid) {
+          return { valid: false, reason: 'Invalid email address' };
+        }
+        const emailParts = email.split('@');
+        if (emailParts.length !== 2 || emailParts[1] !== 'gmail.com') {
+          return { valid: false, reason: 'Only Gmail addresses are allowed' };
+        }
+        return { valid: true };
+      } 
+      const { valid, reason } = await isEmailValid(email);    
+
+    if (!valid) {return res.status(400).send({
+        reason })};
     // password hashing by bcrypt package
     const hashedPassword = await bcrypt.hash(password, 10);
     
@@ -70,22 +84,22 @@ export async function register(req, res, next)  {
     newUser.token = token;
     await newUser.save();
     
-    res.json({ status: httpStatusText.SUCCESS, data: { user: newUser } });
+    res.json({ status: httpStatusText.SUCCESS,msg: "The success of the registration process"});
 };
 export async function login(req, res, next)  {
     
     const { email, password } = req.body;
 
     if (!email && !password) {
-        const error = AppError.create('email and password are required', 400, httpStatusText.FAIL);
-        return next(error);
+        return res.status(400).json({ error: "Email or Password is required" });
+        
     }
 
     const user = await User.findOne({ email: email });
 
     if (!user) {
-        const error = AppError.create('user not found', 400, httpStatusText.FAIL);
-        return next(error);
+        return res.status(400).json({ error: "User Not Found" });
+
     }
 
     const matchedPassword = await bcrypt.compare(password, user.password);
@@ -96,8 +110,9 @@ export async function login(req, res, next)  {
         user.token = token
         return res.json({ status: httpStatusText.SUCCESS, data: {user} });
     } else {
-        const error = AppError.create('something wrong', 500, httpStatusText.ERROR);
-        return next(error);
+        
+        return res.status(500).json({ error: "The password is incorrect" });
+
     }
 };
 export async function update(req, res)  {
@@ -125,7 +140,6 @@ export async function forgotPassword(req, res, next) {
     });
     const link = 
     `http://localhost:5000/api/users/resetpassword/${user._id}/${token}`;
-    
     const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -143,32 +157,31 @@ export async function forgotPassword(req, res, next) {
         if (error){
             console.log(error);
         }else{
-            console.log("email sent: " + success.response)
+            console.log("email send: " + success.response)
         }
     
     });
-    res.send("link_sned")
+    res.send("link_send")
     }
 export async function getResetPassword(req, res, next) {
     const user = await User.findById(req.params.userId);
     if (!user) {
-        const error = AppError.create('user not found', 400, httpStatusText.FAIL);
-        return next(error);
+        return res.status(404).send('User not found');
+
     }
 const secret = process.env.JWT_SECRET_KEY + user.password;
 try {
     jwt.verify(req.params.token, secret);
     res.status(200).send({email: user.email, message: 'reset password'});
 } catch (error) {
-    console.log(error)
     res.json(error.message).status(403)
 }
 ;}
 export async function resetPassword(req, res, next) {
     const user = await User.findById(req.params.userId);
     if (!user) {
-        const error = AppError.create('user not found', 400, httpStatusText.FAIL);
-        return next(error);
+        return res.status(404).send('User not found');
+
     }
 const secret = process.env.JWT_SECRET_KEY + user.password;
 try {
@@ -179,13 +192,11 @@ try {
     await user.save();
     res.send('success new password');
 } catch (error) {
-    console.log(error)
     res.json(error.message).status(403)
 }
 }
 export async function callback(req, res) {
         if (req.user) {
-            console.log(req.user._json);
             res.status(200).json({
                 error: false,
                 message: "successfully loged in",
