@@ -22,6 +22,7 @@ export async function uplodePhoto(req, res) {
         return res.status(404).json({ msg: "User not found" });
     }
 
+    
     if (!req.file) {
         return res.status(400).json({ msg: "file provided" });
     }
