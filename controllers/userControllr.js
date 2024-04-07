@@ -57,21 +57,49 @@ export async function register(req, res, next)  {
         return res.status(400).json({ error: "User already exists" });
 
     }
+    async function isNameValid(Name)
+{
+    if (validator.isEmpty(Name)) {
+        return { valid1: false, msg: 'name is require' };
+      }
+      const length = validator.isLength(Name,3)
+      if(!length){
+        return { valid1: false, msg: 'Name must be greater than 3 character ' };
+      }
+     else{ return { valid1: true };
+}} 
+const { valid1, msg } = await isNameValid(Name);    
+        if (!valid1) {return res.status(400).send({ msg })};
+        
     async function isEmailValid(email) {
         const isValid = emailValidator.validate(email);
         if (!isValid) {
-          return { valid: false, reason: 'Invalid email address' };
+          return { valid: false, msg: 'Invalid email address' };
         }
         const emailParts = email.split('@');
         if (emailParts.length !== 2 || emailParts[1] !== 'gmail.com') {
-          return { valid: false, reason: 'Only Gmail addresses are allowed' };
+          return { valid: false, msg: 'Only Gmail addresses are allowed' };
         }
         return { valid: true };
       } 
       const { valid, reason } = await isEmailValid(email);    
+    if (!valid) {return res.status(400).send({reason })};
 
-    if (!valid) {return res.status(400).send({
-        reason })};
+    async function isPasswordValid(password)
+    {
+        if (validator.isEmpty(password)) {
+            return { valid2: false, msg: 'password is require' };
+          }
+          const length = validator.isLength(password,8)
+          if(!length){
+            return { valid2: false, Msg: 'password must be greater than 8 character ' };
+          }
+        
+          return { valid2: true };
+    } 
+    const { valid2, Msg } = await isPasswordValid(password);    
+            if (!valid2) {return res.status(400).send({ Msg })};
+
     // password hashing by bcrypt package
     const hashedPassword = await bcrypt.hash(password, 10);
     
