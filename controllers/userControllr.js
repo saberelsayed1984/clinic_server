@@ -145,7 +145,7 @@ export async function login(req, res, next)  {
         const token = await genrateJwt({email: user.email, id: user._id})
         await User.updateOne({_id:user._id }, {$set:{token}})
         user.token = token
-        return res.json({ status: httpStatusText.SUCCESS,  msg: {user} });
+        return res.json({ status: httpStatusText.SUCCESS,  msg: "The success of the login process" });
     } else {
         
         return res.status(500).json({ error: "The password is incorrect" });
