@@ -7,6 +7,7 @@ import genrateJwt from '../utlits/genrateJwt.js';
 import nodemailer from "nodemailer";
 import Joi from "joi";
 import emailValidator from 'email-validator';
+import validator from 'validator';
 import { token } from 'morgan';
 import path from "path";
 import multer from "multer";
