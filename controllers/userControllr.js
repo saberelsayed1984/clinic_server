@@ -14,6 +14,7 @@ import multer from "multer";
 import cloudinary from 'cloudinary';
 import fs from "fs";
 import {cloudinaryUploadImage,cloudinaryRemoveImage} from "../utlits/cloudinary.js";
+import { error } from 'console';
 const __filename = path.basename(import.meta.url);
 const __dirname = path.dirname(__filename);
 export async function uplodePhoto(req, res) {
@@ -57,25 +58,45 @@ export async function register(req, res, next)  {
     if (oldUser) {
         return res.status(400).json({ error: "User already exists" });
 
-    }
+    }{
     async function isNameValid(Name)
 {
     if (validator.isEmpty(Name)) {
-        return { valid1: false, msg: 'name is require' };
+        return { valid: false, msg: 'name is require' };
       }
       const length = validator.isLength(Name,3)
       if(!length){
-        return { valid1: false, msg: 'Name must be greater than 3 character ' };
+        return { valid: false, msg: 'Name must be greater than 3 character ' };
       }
-     else{ return { valid1: true };
+     else{ return { valid: true };
 }} 
-const { valid1, msg } = await isNameValid(Name);    
-        if (!valid1) {return res.status(400).send({ msg })};
+let { valid, msg } = await isNameValid(Name);    
+        if (!valid) {return res.status(400).send({ msg })};
+
+    }  
+     { async function isPasswordValid(password)
+    {
+        if (validator.isEmpty(password)) {
+            return { valid: false, msg: 'password is require' };
+          }
+          const length = validator.isLength(password,8)
+          if(!length){
+            return { valid: false, msg: 'password must be greater than 8 character ' };
+          }
         
-    async function isEmailValid(email) {
+          return { valid: true };
+    } 
+    let { valid, msg } = await isPasswordValid(password);    
+            if (!valid) {return res.status(400).send({ msg })};
+    }
+    { async function isEmailValid(email) {
+
+        if (validator.isEmpty(email)) {
+            return { valid: false, msg: 'email is require' };
+          }
         const isValid = emailValidator.validate(email);
         if (!isValid) {
-          return { valid: false, msg: 'Invalid email address' };
+          return { valid: false,msg: 'Invalid email address' };
         }
         const emailParts = email.split('@');
         if (emailParts.length !== 2 || emailParts[1] !== 'gmail.com') {
@@ -83,23 +104,10 @@ const { valid1, msg } = await isNameValid(Name);
         }
         return { valid: true };
       } 
-      const { valid, reason } = await isEmailValid(email);    
-    if (!valid) {return res.status(400).send({reason })};
-
-    async function isPasswordValid(password)
-    {
-        if (validator.isEmpty(password)) {
-            return { valid2: false, msg: 'password is require' };
-          }
-          const length = validator.isLength(password,8)
-          if(!length){
-            return { valid2: false, Msg: 'password must be greater than 8 character ' };
-          }
-        
-          return { valid2: true };
-    } 
-    const { valid2, Msg } = await isPasswordValid(password);    
-            if (!valid2) {return res.status(400).send({ Msg })};
+      const { valid, msg } = await isEmailValid(email);    
+    if (!valid) {return res.status(400).send({msg })};
+    }
+    
 
     // password hashing by bcrypt package
     const hashedPassword = await bcrypt.hash(password, 10);
