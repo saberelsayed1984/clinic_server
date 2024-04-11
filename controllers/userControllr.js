@@ -15,6 +15,7 @@ import cloudinary from 'cloudinary';
 import fs from "fs";
 import {cloudinaryUploadImage,cloudinaryRemoveImage} from "../utlits/cloudinary.js";
 import { error } from 'console';
+import { create } from 'domain';
 const __filename = path.basename(import.meta.url);
 const __dirname = path.dirname(__filename);
 export async function uplodePhoto(req, res) {
@@ -56,9 +57,14 @@ export async function register(req, res, next)  {
     const oldUser = await User.findOne({ email: email });
     
     if (oldUser) {
-        return res.status(400).json({ error: "User already exists" });
+        return res.status(400).json({ msg: "User already exists" });
 
-    }{
+    }
+    const userName = await User.findOne({Name: Name});
+        if (userName) {
+            return res.status(400).send( {msg:'Please change the name'});
+        } 
+        {
     async function isNameValid(Name)
 {
     if (validator.isEmpty(Name)) {
@@ -79,6 +85,8 @@ let { valid, msg } = await isNameValid(Name);
         if (validator.isEmpty(password)) {
             return { valid: false, msg: 'password is require' };
           }
+          if (!validator.isStrongPassword(password))
+          return {valid:false,msg:"Password must be a strong password.."};
           const length = validator.isLength(password,8)
           if(!length){
             return { valid: false, msg: 'password must be greater than 8 character ' };
@@ -89,7 +97,7 @@ let { valid, msg } = await isNameValid(Name);
     let { valid, msg } = await isPasswordValid(password);    
             if (!valid) {return res.status(400).send({ msg })};
     }
-    { async function isEmailValid(email) {
+   { async function isEmailValid(email) {
 
         if (validator.isEmpty(email)) {
             return { valid: false, msg: 'email is require' };
@@ -111,18 +119,66 @@ let { valid, msg } = await isNameValid(Name);
 
     // password hashing by bcrypt package
     const hashedPassword = await bcrypt.hash(password, 10);
+
+       
     
     const newUser = new User({
         Name,
         email,
-        password: hashedPassword
-    });
+        password: hashedPassword,
+        token : bcrypt
+    }); 
+  
     const token = await genrateJwt({email: newUser.email, id: newUser._id})
     newUser.token = token;
     await newUser.save();
+ 
+    const link = 
+    `${process.env.CLIENT_URL}/verifyEmail/${newUser._id}/${token}`;
+    const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: process.env.ADMIN_EMAIL,
+            pass: process.env.USER_PASS
+        }
+    });
+    const mailOption = {
+        from: process.env.ADMIN_EMAIL,
+        to: email,
+        subject: "verify email...",
+        text: `Please click on the following link to verify email... : ${link}`
+    }
+    transporter.sendMail(mailOption, (error , success) =>{
+        if (error){
+            console.log(error);
+        }else{
+            console.log("email send: " + success.response)
+        }
     
-    res.json({ status: httpStatusText.SUCCESS,msg: "The success of the registration process"});
+    }); 
+   // res.json({ status: httpStatusText.SUCCESS,msg: "The success of the registration process"});
+    res.send("link_send")
+   
 };
+
+export async function verifyEmail(req,res,next) {
+    try{
+        const user = await User.findById(req.params.userId);
+        if (!user) {
+            return res.status(404).send( {msg:'invalid link'});
+        } 
+        const Token = await genrateJwt({email: user.email, id: user._id})
+        if(!Token){
+            return res.status(404).send( {msg:'invalid link'});
+        }
+        await User.updateOne(Verified = true);
+        res.json({ status: httpStatusText.SUCCESS,msg: "email verified sucessfully"});
+    }
+     catch (error) {
+        res.json(error.message).status(500);
+
+     }
+}
 export async function login(req, res, next)  {
     
     const { email, password } = req.body;
@@ -138,7 +194,9 @@ export async function login(req, res, next)  {
         return res.status(400).json({  msg: "User Not Found" });
 
     }
-
+if(!user.Verified){
+    return res.status(400).json({  msg: " An Email sent to your account please verify " });
+}
     const matchedPassword = await bcrypt.compare(password, user.password);
 
     if (user && matchedPassword) {
@@ -155,7 +213,8 @@ export async function login(req, res, next)  {
 export async function update(req, res)  {
     const userId = req.params.userId; 
     const updateUser = await User.updateOne({_id: userId}, {$set:{...req.body}});
-    return res.status(200).json({status: httpStatusText.SUCCESS,  msg:{updateUser}})};
+    return res.status(200).json({status: httpStatusText.SUCCESS,  msg:{updateUser}})
+    };
 export async function deleteUser(req, res) {
         await User.deleteOne ({_id: req.params.userId});
         res.status(200).json({status: httpStatusText.SUCCESS,  msg: null});
@@ -176,7 +235,7 @@ export async function forgotPassword(req, res, next) {
         expiresIn: '60m'
     });
     const link = 
-    `http://localhost:5000/api/users/resetpassword/${user._id}/${token}`;
+    `${process.env.CLIENT_URL}/resetpassword/${user._id}/${token}`;
     const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
