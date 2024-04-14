@@ -53,7 +53,7 @@ export async function uplodePhoto(req, res) {
     fs.unlinkSync(imagePath);
 }
 export async function register(req, res, next)  {
-    const { Name, email, password } = req.body;
+    const { Name, email, password , confirmPassword } = req.body;
     const oldUser = await User.findOne({ email: email });
     
     if (oldUser) {
@@ -64,7 +64,25 @@ export async function register(req, res, next)  {
         if (userName) {
             return res.status(400).send( {msg:'Please change the name'});
         } 
-        {
+
+  { 
+     async function isconfirmPasswordValid(confirmPassword){
+    if (validator.isEmpty(confirmPassword)) {
+        return { valid: false, msg: 'confirmPassword is required' };
+      }
+
+    if(password != confirmPassword )
+    {
+        return { valid: false, msg:'Incorrect password'};
+    }
+    else{ return { valid: true }};
+}
+let { valid, msg } = await isconfirmPasswordValid(confirmPassword);    
+        if (!valid) {return res.status(400).send({ msg })};
+    }
+
+    
+{
     async function isNameValid(Name)
 {
     if (validator.isEmpty(Name)) {
@@ -86,7 +104,7 @@ let { valid, msg } = await isNameValid(Name);
             return { valid: false, msg: 'Password is required' };
           }
           if (!validator.isStrongPassword(password))
-          return {valid:false,msg:"Password must be a strong password.."};
+          return {valid:false,msg:"Password must be a strong password..You should write:-(A combination of uppercase letters,lowercase letters,numbers,and symbols.)"};
           const length = validator.isLength(password,8)
           if(!length){
             return { valid: false, msg: 'Password must be greater than 8 character ' };
@@ -137,14 +155,16 @@ let { valid, msg } = await isNameValid(Name);
     const link = 
     `https://clinic-server-4pyg.vercel.app/api/users/verifyEmail/${newUser._id}/${token}`;
     const transporter = nodemailer.createTransport({
-        service: "Hotmail",
+        service: "hotmail",
+        host: "smtp.example.com",
+        port: 587,
         auth: {
             user: mail ,
             pass: pass
         }
     });
     const mailOption = {
-        from: mail,
+        from: '"Medi Team"<team62024@outlook.com>',
         to: email,
         subject: "Verify email...",
         text: `Please click on the following link to verify email... : ${link}`
@@ -158,7 +178,7 @@ let { valid, msg } = await isNameValid(Name);
     
     }); 
    // res.json({ status: httpStatusText.SUCCESS,msg: "The success of the registration process"});
-    res.send({msg : 'Link was sent'} )
+    res.send({msg : 'Link was sent '} )
    
 };
 
@@ -205,7 +225,7 @@ if(!user.Verified){
         const token = await genrateJwt({email: user.email, id: user._id})
         await User.updateOne({_id:user._id }, {$set:{token}})
         user.token = token
-        return res.json({ status: httpStatusText.SUCCESS,  msg: "The success of the login process" });
+        return res.json({ status: httpStatusText.SUCCESS,  msg: "The success of the login process" ,  _id: user._id, name: user.Name, email : user.email });
     } else {
         
         return res.status(500).json({ error: "The password is incorrect" });
@@ -236,19 +256,22 @@ export async function forgotPassword(req, res, next) {
     const token = jwt.sign({ email: user.email, id: user.id}, secret, {
         expiresIn: '60m'
     });
+
     const mail = "team62024@outlook.com" ;
      const pass ="Te@m62024";
     const link = 
     `https://clinic-server-4pyg.vercel.app/api/users/resetpassword/${user._id}/${token}`;
     const transporter = nodemailer.createTransport({
-        service: "Hotmail",
+        service: "hotmail",
+        host: "smtp.example.com",
+        port: 587,
         auth: {
             user: mail,
-            pass: pass
+            pass: pass,
         }
     });
     const mailOption = {
-        from: mail,
+        from: '"Medi Team"<team62024@outlook.com>',
         to: user.email,
         subject: "Reset your password",
         text: `Please click on the following link to reset your password: ${link}`
