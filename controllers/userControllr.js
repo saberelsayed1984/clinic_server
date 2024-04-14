@@ -156,8 +156,6 @@ let { valid, msg } = await isNameValid(Name);
     `https://clinic-server-4pyg.vercel.app/api/users/verifyEmail/${newUser._id}/${token}`;
     const transporter = nodemailer.createTransport({
         service: "hotmail",
-        host: "smtp.example.com",
-        port: 587,
         auth: {
             user: mail ,
             pass: pass
@@ -263,8 +261,6 @@ export async function forgotPassword(req, res, next) {
     `https://clinic-server-4pyg.vercel.app/api/users/resetpassword/${user._id}/${token}`;
     const transporter = nodemailer.createTransport({
         service: "hotmail",
-        host: "smtp.example.com",
-        port: 587,
         auth: {
             user: mail,
             pass: pass,
