@@ -27,7 +27,7 @@ export async function uplodePhoto(req, res) {
 
     
     if (!req.file) {
-        return res.status(400).json({ msg: "file provided" });
+        return res.status(400).json({ msg: "File provided" });
     }
 
     const imagePath = path.join(__dirname, `./image/${req.file.filename}`);
@@ -68,7 +68,7 @@ export async function register(req, res, next)  {
     async function isNameValid(Name)
 {
     if (validator.isEmpty(Name)) {
-        return { valid: false, msg: 'name is require' };
+        return { valid: false, msg: 'Name is required' };
       }
       const length = validator.isLength(Name,3)
       if(!length){
@@ -83,13 +83,13 @@ let { valid, msg } = await isNameValid(Name);
      { async function isPasswordValid(password)
     {
         if (validator.isEmpty(password)) {
-            return { valid: false, msg: 'password is require' };
+            return { valid: false, msg: 'Password is required' };
           }
           if (!validator.isStrongPassword(password))
           return {valid:false,msg:"Password must be a strong password.."};
           const length = validator.isLength(password,8)
           if(!length){
-            return { valid: false, msg: 'password must be greater than 8 character ' };
+            return { valid: false, msg: 'Password must be greater than 8 character ' };
           }
         
           return { valid: true };
@@ -100,7 +100,7 @@ let { valid, msg } = await isNameValid(Name);
    { async function isEmailValid(email) {
 
         if (validator.isEmpty(email)) {
-            return { valid: false, msg: 'email is require' };
+            return { valid: false, msg: 'Email is required' };
           }
         const isValid = emailValidator.validate(email);
         if (!isValid) {
@@ -108,7 +108,7 @@ let { valid, msg } = await isNameValid(Name);
         }
         const emailParts = email.split('@');
         if (emailParts.length !== 2 || emailParts[1] !== 'gmail.com') {
-          return { valid: false, msg: 'Only Gmail addresses are allowed' };
+          return { valid: false, msg: 'Only gmail addresses are allowed' };
         }
         return { valid: true };
       } 
@@ -132,32 +132,33 @@ let { valid, msg } = await isNameValid(Name);
     const token = await genrateJwt({email: newUser.email, id: newUser._id})
     newUser.token = token;
     await newUser.save();
- 
+     const mail = "team62024@outlook.com" ;
+     const pass ="Te@m62024";
     const link = 
-    `${process.env.CLIENT_URL}/verifyEmail/${newUser._id}/${token}`;
+    `https://clinic-server-4pyg.vercel.app/api/users/verifyEmail/${newUser._id}/${token}`;
     const transporter = nodemailer.createTransport({
-        service: "gmail",
+        service: "Hotmail",
         auth: {
-            user: process.env.ADMIN_EMAIL,
-            pass: process.env.USER_PASS
+            user: mail ,
+            pass: pass
         }
     });
     const mailOption = {
-        from: process.env.ADMIN_EMAIL,
+        from: mail,
         to: email,
-        subject: "verify email...",
+        subject: "Verify email...",
         text: `Please click on the following link to verify email... : ${link}`
     }
     transporter.sendMail(mailOption, (error , success) =>{
         if (error){
             console.log(error);
         }else{
-            console.log("email send: " + success.response)
+            console.log("Email was sent: " + success.response)
         }
     
     }); 
    // res.json({ status: httpStatusText.SUCCESS,msg: "The success of the registration process"});
-    res.send("link_send")
+    res.send({msg : 'Link was sent'} )
    
 };
 
@@ -171,7 +172,7 @@ export async function verifyEmail(req,res,next) {
         if(!Token){
             return res.status(404).send( {msg:'invalid link'});
         }
-        await User.updateOne(Verified = true);
+        await User.updateOne( {"Verified" : true });
         res.json({ status: httpStatusText.SUCCESS,msg: "email verified sucessfully"});
     }
      catch (error) {
@@ -195,7 +196,7 @@ export async function login(req, res, next)  {
 
     }
 if(!user.Verified){
-    return res.status(400).json({  msg: " An Email sent to your account please verify " });
+    return res.status(400).json({  msg: " An Email was sent to your account please verify " });
 }
     const matchedPassword = await bcrypt.compare(password, user.password);
 
@@ -234,30 +235,32 @@ export async function forgotPassword(req, res, next) {
     const token = jwt.sign({ email: user.email, id: user.id}, secret, {
         expiresIn: '60m'
     });
+    const mail = "team62024@outlook.com" ;
+     const pass ="Te@m62024";
     const link = 
-    `${process.env.CLIENT_URL}/resetpassword/${user._id}/${token}`;
+    `https://clinic-server-4pyg.vercel.app/api/users/resetpassword/${user._id}/${token}`;
     const transporter = nodemailer.createTransport({
-        service: "gmail",
+        service: "Hotmail",
         auth: {
-            user: process.env.ADMIN_EMAIL,
-            pass: process.env.USER_PASS
+            user: mail,
+            pass: pass
         }
     });
     const mailOption = {
-        from: process.env.ADMIN_EMAIL,
+        from: mail,
         to: user.email,
-        subject: "reset password",
+        subject: "Reset your password",
         text: `Please click on the following link to reset your password: ${link}`
     }
     transporter.sendMail(mailOption, (error , success) =>{
         if (error){
             console.log(error);
         }else{
-            console.log("email send: " + success.response)
+            console.log("email was sent: " + success.response)
         }
     
     });
-    res.send("link_send")
+    res.send({msg : 'Link was sent'} )
     }
 export async function getResetPassword(req, res, next) {
     const user = await User.findById(req.params.userId);
@@ -268,7 +271,7 @@ export async function getResetPassword(req, res, next) {
 const secret = process.env.JWT_SECRET_KEY + user.password;
 try {
     jwt.verify(req.params.token, secret);
-    res.status(200).send({email: user.email,  msg: 'reset password'});
+    res.status(200).send({email: user.email,  msg: 'Reset the password'});
 } catch (error) {
     res.json(error.message).status(403)
 }
@@ -286,7 +289,7 @@ try {
     req.body.password = await bcrypt.hash(req.body.password, salt);
     user.password = req.body.password;
     await user.save();
-    res.send({ msg:'success new password'});
+    res.send({ msg:'Success a new password'});
 } catch (error) {
     res.json(error.message).status(403)
 }
@@ -295,10 +298,10 @@ export async function callback(req, res) {
         if (req.user) {
             res.status(200).json({
                 error: false,
-                msg: "successfully loged in",
+                msg: "Successfully loged in",
                 user: req.user,
             });
         } else {
-            res.status(403).json({ error: true,  msg: "not authorized" });
+            res.status(403).json({ error: true,  msg: "Not authorized" });
         }
         }
