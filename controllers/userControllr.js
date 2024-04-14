@@ -172,8 +172,9 @@ export async function verifyEmail(req,res,next) {
         if(!Token){
             return res.status(404).send( {msg:'invalid link'});
         }
-        await User.updateOne( {"Verified" : true });
-        res.json({ status: httpStatusText.SUCCESS,msg: "email verified sucessfully"});
+        await user.updateOne({ Verified : true });
+
+     res.json({ status: httpStatusText.SUCCESS,msg: "email verified sucessfully"});
     }
      catch (error) {
         res.json(error.message).status(500);
