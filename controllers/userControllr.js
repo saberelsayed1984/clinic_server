@@ -25,7 +25,7 @@ export async function uplodePhoto(req, res) {
         return res.status(404).json({ msg: "User not found" });
     }
 
-    
+
     if (!req.file) {
         return res.status(400).json({ msg: "File provided" });
     }
@@ -151,7 +151,7 @@ let { valid, msg } = await isNameValid(Name);
     newUser.token = token;
     await newUser.save();
      const mail = "team62024@outlook.com" ;
-     const pass ="Te@m62024";
+     const pass ="yrbmmqddqvnzalii";
     const link = 
     `https://clinic-server-4pyg.vercel.app/api/users/verifyEmail/${newUser._id}/${token}`;
     const transporter = nodemailer.createTransport({
@@ -256,7 +256,7 @@ export async function forgotPassword(req, res, next) {
     });
 
     const mail = "team62024@outlook.com" ;
-     const pass ="Te@m62024";
+     const pass ="yrbmmqddqvnzalii";
     const link = 
     `https://clinic-server-4pyg.vercel.app/api/users/resetpassword/${user._id}/${token}`;
     const transporter = nodemailer.createTransport({
