@@ -231,8 +231,13 @@ if(!user.Verified){
 };
 export async function update(req, res)  {
     const userId = req.params.userId; 
-    const updateUser = await User.updateOne({_id: userId}, {$set:{...req.body}});
-    return res.status(200).json({status: httpStatusText.SUCCESS,  msg:{updateUser}})
+    const { Name } = req.body;
+    const userName = await User.findOne({Name: Name});
+    if (userName) {
+        return res.status(400).send( {msg:'Please change the name'});
+    } 
+     await User.updateOne({_id: userId}, {$set:{...req.body}});
+    return res.status(200).json({status: httpStatusText.SUCCESS,  msg:"update succesfully" })
     };
 export async function deleteUser(req, res) {
         await User.deleteOne ({_id: req.params.userId});
