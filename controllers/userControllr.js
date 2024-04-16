@@ -45,7 +45,6 @@ export async function uplodePhoto(req, res) {
     await user.save(); // Save the user's changes first
 
     res.status(200).json({
-        error: false,
         msg: "successfully Upload",
         profilePhoto: { url: result.secure_url, publicId: result.public_id },
     });

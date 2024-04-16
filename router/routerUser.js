@@ -8,7 +8,7 @@ const router = express.Router();
 router.route('/register')
         .post(userControllr.register);
 router.route('/verifyEmail/:userId/:token')
-        .get(userControllr.verifyEmail);         
+        .get(userControllr.verifyEmail);
 router.post('/uplodePhoto/:id', photoUplode.single("image"), userControllr.uplodePhoto);
 router.route('/login')
         .post( userControllr.login);

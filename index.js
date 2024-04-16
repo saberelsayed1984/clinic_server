@@ -3,10 +3,10 @@ import morgan from 'morgan'
 import cors from 'cors'
 import bodyParser from 'body-parser' 
 import { config } from 'dotenv'
+import path from "path"
 import router from './router/route.js'
 import connect from './dataBase/connect.js'
 import routerUser from './router/routerUser.js'
-//import notification from'./router/routerNotification.js'
 import passport from 'passport';
 import * as passport_st from './controllers/passport.js'
 import  Session  from 'express-session';
@@ -30,7 +30,6 @@ app.use(express.json())
 config()
 app.use('/api/', router)
 app.use('/api/users', routerUser)
-//app.use('/api/',notification)
 app.use(passport.initialize())
 app.use(passport.session())
 app.get('/', (req, res) => {
