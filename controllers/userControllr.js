@@ -225,7 +225,7 @@ if(!user.Verified){
         return res.json({ status: httpStatusText.SUCCESS,  msg: "The success of the login process" ,  _id: user._id, name: user.Name, email : user.email });
     } else {
         
-        return res.status(500).json({ error: "The password is incorrect" });
+        return res.status(500).json({ msg: "The password is incorrect" });
 
     }
 };
