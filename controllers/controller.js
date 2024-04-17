@@ -1,8 +1,6 @@
 import httpStatusText from'../utlits/httpStatus.js';
-export async function getAll(req, res) {
-    res.json("welcom to home page");}
 export async function postDiabetes(req, res) {
-    let url = process.env.AI_MODEL_URL_Diabetes;
+    let url = "http://web-production-59d8.up.railway.app/diabetes_prediction";
     const {Pregnancies, Glucose , BloodPressure
         , SkinThickness, Insulin, BMI
         , DiabetesPedigreeFunction, Age} = req.body;
@@ -23,10 +21,10 @@ fetch(url, options)
 export async function postHeart(req, res) {
     
 
-        let url = process.env.AI_MODEL_URL_Heart_disease;
+        let url = "http://web-production-6fc8.up.railway.app/heart_disease_prediction";
         const { Age, Sex, Cp 
             , Trestbps , Chol , Fbs 
-            , Restecg , Thalach , Exang , Oldpeak , Slope , Ca , Thal } = req.body;
+            , Restecg , Thalach , Exang , Oldpeak , Slope , Ca , Thal} = req.body;
         let options = {
         method: 'POST',
         headers: {
@@ -44,7 +42,7 @@ export async function postHeart(req, res) {
 export async function postCancer(req, res) {
     
 
-            let url = process.env.AI_MODEL_URL_cancer;
+            let url = "https://web-production-b81f.up.railway.app/Breast_cancer_prediction";
             const {clump_thickness ,
                 uniform_cell_size,
                 uniform_cell_shape,
@@ -71,7 +69,7 @@ export async function postCancer(req, res) {
 export async function postParkinson(req, res) {
     
 
-                let url = process.env.AI_MODEL_URL_Parkinson;
+                let url = "https://web-production-fc13.up.railway.app/parkinson_prediction";
                 const {
                     MDVP_fo_HZ
                     ,MDVP_Fhi_HZ

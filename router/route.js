@@ -4,8 +4,6 @@ import verifyToken from '../models/verifyToken.js';
 
 const router = Router();
 import *  as controller from '../controllers/controller.js';
-router.route('/')
-        .post( body() ,verifyToken,controller.getAll);
 router.route('/medical-consultation/diabetes')
         .post( body() ,controller.postDiabetes);
 router.route('/medical-consultation/heart')
