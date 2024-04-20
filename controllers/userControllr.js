@@ -343,6 +343,7 @@ export async function forgotPassword(req, res, next) {
     });
     res.send({msg : 'please check your email'} )
     }
+    
 /*export async function getResetPassword(req, res, next) {
     const user = await User.findById(req.params.userId);
     if (!user) {
