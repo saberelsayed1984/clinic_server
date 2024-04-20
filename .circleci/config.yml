@@ -19,9 +19,9 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            docker build -t ClinicServer -t saber808/ClinicServer:latest .
+            docker build -t clinicserver -t saber808/clinicserver:latest .
             echo $DOCKER_PASSWORD | docker login -u saber808 --password-stdin
-            docker push saber808/ClinicServer:latest
+            docker push saber808/clinicserver:latest
 
 workflows:
   build_test:
