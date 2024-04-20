@@ -307,8 +307,7 @@ export async function forgotPassword(req, res, next) {
           } 
           const { valid, msg } = await isEmailValid(email);    
         if (!valid) {return res.status(400).send({msg })};
-        }
-        const user = await User.findOne({email: req.body.email});
+        }const user = await User.findOne({email: req.body.email});
         if (!user) {
             return res.status(404).send( {msg:'User not found'});
         }

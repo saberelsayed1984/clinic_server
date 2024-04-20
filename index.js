@@ -21,7 +21,7 @@ app.use(
 );
 app.use(morgan('tiny'))
 app.use(cors({
-    origin: "http://localhost:5000",
+    origin: "*",
     methods: "GET,POST,PUT,DELETE,",
     Credential: true,
 }))
