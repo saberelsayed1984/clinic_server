@@ -154,7 +154,7 @@ let { valid, msg } = await isNameValid(Name);
      const mail = "team62024@outlook.com" ;
      const pass ="yrbmmqddqvnzalii";
     const link = 
-    `https://clinic-server-4pyg.vercel.app/api/users/verifyEmail/${newUser._id}/${token}`;
+    `https://clinic-server-1.onrender.com/api/users/verifyEmail/${newUser._id}/${token}`;
     const transporter = nodemailer.createTransport({
         service: "hotmail",
         auth: {
@@ -319,7 +319,7 @@ export async function forgotPassword(req, res, next) {
     const mail = "team62024@outlook.com" ;
      const pass ="yrbmmqddqvnzalii";
     const link = 
-    `https://clinic-server-4pyg.vercel.app/api/users/resetpassword/${user._id}/${token}`;
+    `https://clinic-server-1.onrender.com/api/users/resetpassword/${user._id}/${token}`;
     const transporter = nodemailer.createTransport({
         service: "hotmail",
         auth: {
