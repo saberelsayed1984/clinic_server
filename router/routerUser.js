@@ -15,7 +15,7 @@ router.route('/login')
 router.route('/forgotpassword')
         .post( userControllr.forgotPassword);
 router.route('/resetpassword/:userId/:token')
-        .get(userControllr.getResetPassword)
+       // .get(userControllr.getResetPassword)
         .post(userControllr.resetPassword);        
 router.route('/:userId')
         .put(userControllr.update);

@@ -21,6 +21,7 @@ const __dirname = path.dirname(__filename);
 export async function uplodePhoto(req, res) {
     const userId = req.params.id;
     const user = await User.findById(userId);
+
     if (!user) {
         return res.status(404).json({ msg: "User not found" });
     }
@@ -61,7 +62,7 @@ export async function register(req, res, next)  {
     }
     const userName = await User.findOne({Name: Name});
         if (userName) {
-            return res.status(400).send( {msg:'Please change the name'});
+            return res.status(400).send( {msg:'The name is already in use.'});
         } 
 
   { 
@@ -72,7 +73,7 @@ export async function register(req, res, next)  {
 
     if(password != confirmPassword )
     {
-        return { valid: false, msg:'Incorrect password'};
+        return { valid: false, msg:'Your passwords donot match. please enter your password again to confirm it.'};
     }
     else{ return { valid: true }};
 }
@@ -102,12 +103,13 @@ let { valid, msg } = await isNameValid(Name);
         if (validator.isEmpty(password)) {
             return { valid: false, msg: 'Password is required' };
           }
-          if (!validator.isStrongPassword(password))
-          return {valid:false,msg:"Password must be a strong password..You should write:-(A combination of uppercase letters,lowercase letters,numbers,and symbols.)"};
           const length = validator.isLength(password,8)
           if(!length){
             return { valid: false, msg: 'Password must be greater than 8 character ' };
           }
+          if (!validator.isStrongPassword(password))
+          return {valid:false,msg:"Password must be a strong password..You should write:-(A combination of uppercase letters,lowercase letters,numbers,and symbols.)"};
+          
         
           return { valid: true };
     } 
@@ -121,7 +123,7 @@ let { valid, msg } = await isNameValid(Name);
           }
         const isValid = emailValidator.validate(email);
         if (!isValid) {
-          return { valid: false,msg: 'Invalid email address' };
+          return { valid: false,msg: 'Enter a valid email address.' };
         }
         const emailParts = email.split('@');
         if (emailParts.length !== 2 || emailParts[1] !== 'gmail.com') {
@@ -175,7 +177,7 @@ let { valid, msg } = await isNameValid(Name);
     
     }); 
    // res.json({ status: httpStatusText.SUCCESS,msg: "The success of the registration process"});
-    res.send({msg : 'Link was sent '} )
+    res.send({msg : 'register sucessfully... please check your email to verify your account. '} )
    
 };
 
@@ -191,7 +193,7 @@ export async function verifyEmail(req,res,next) {
         }
         await user.updateOne({ Verified : true });
 
-     res.json({ status: httpStatusText.SUCCESS,msg: "email verified sucessfully"});
+    res.json({ status: httpStatusText.SUCCESS,msg: "email verified sucessfully"});
     }
      catch (error) {
         res.json(error.message).status(500);
@@ -213,6 +215,26 @@ export async function login(req, res, next)  {
         return res.status(400).json({  msg: "User Not Found" });
 
     }
+
+    { async function isEmailValid(email) {
+
+        if (validator.isEmpty(email)) {
+            return { valid: false, msg: 'Email is required' };
+          }
+        const isValid = emailValidator.validate(email);
+        if (!isValid) {
+          return { valid: false,msg: 'Enter a valid email address.' };
+        }
+        const emailParts = email.split('@');
+        if (emailParts.length !== 2 || emailParts[1] !== 'gmail.com') {
+          return { valid: false, msg: 'Only gmail addresses are allowed' };
+        }
+        return { valid: true };
+      } 
+      const { valid, msg } = await isEmailValid(email);    
+    if (!valid) {return res.status(400).send({msg })};
+    }
+
 if(!user.Verified){
     return res.status(400).json({  msg: " An Email was sent to your account please verify " });
 }
@@ -232,11 +254,27 @@ if(!user.Verified){
 export async function update(req, res)  {
     const userId = req.params.userId; 
     const { Name } = req.body;
+    {
+        async function isNameValid(Name)
+    {
+        if (validator.isEmpty(Name)) {
+            return { valid: false, msg: 'Name is required' };
+          }
+          const length = validator.isLength(Name,3)
+          if(!length){
+            return { valid: false, msg: 'Name must be greater than 3 character ' };
+          }
+         else{ return { valid: true };
+    }} 
+    let { valid, msg } = await isNameValid(Name);    
+            if (!valid) {return res.status(400).send({ msg })};
+    
+        }  
     const userName = await User.findOne({Name: Name});
     if (userName) {
-        return res.status(400).send( {msg:'Please change the name'});
+        return res.status(400).send( {msg:'The name is already in use.'});
     } 
-     await User.updateOne({_id: userId}, {$set:{...req.body}});
+    await User.updateOne({_id: userId}, {$set:{...req.body}});
     return res.status(200).json({status: httpStatusText.SUCCESS,  msg:"update succesfully" })
     };
 export async function deleteUser(req, res) {
@@ -248,8 +286,28 @@ export async function forgotPassword(req, res, next) {
             email: Joi.string().email().required()
         }).validate(req.body);
         if (error) {
-            return res.status(400).send(error.details[0].message);
+            return res.status(400).send({msg:'Enter a valid email address.'});
         }   
+        
+        let email = req.body.email;
+        { async function isEmailValid(email) {
+
+            if (validator.isEmpty(email)) {
+                return { valid: false, msg: 'Email is required' };
+              }
+            const isValid = emailValidator.validate(email);
+            if (!isValid) {
+              return { valid: false,msg: 'Enter a valid email address.' };
+            }
+            const emailParts = email.split('@');
+            if (emailParts.length !== 2 || emailParts[1] !== 'gmail.com') {
+              return { valid: false, msg: 'Only gmail addresses are allowed' };
+            }
+            return { valid: true };
+          } 
+          const { valid, msg } = await isEmailValid(email);    
+        if (!valid) {return res.status(400).send({msg })};
+        }
         const user = await User.findOne({email: req.body.email});
         if (!user) {
             return res.status(404).send( {msg:'User not found'});
@@ -284,9 +342,9 @@ export async function forgotPassword(req, res, next) {
         }
     
     });
-    res.send({msg : 'Link was sent'} )
+    res.send({msg : 'please check your email'} )
     }
-export async function getResetPassword(req, res, next) {
+/*export async function getResetPassword(req, res, next) {
     const user = await User.findById(req.params.userId);
     if (!user) {
         return res.status(404).send( {msg:'User not found'});
@@ -299,13 +357,32 @@ try {
 } catch (error) {
     res.json(error.message).status(403)
 }
-;}
+;}*/
 export async function resetPassword(req, res, next) {
     const user = await User.findById(req.params.userId);
+    const password = req.body.password;
     if (!user) {
         return res.status(404).send( {msg:'User not found'});
 
     }
+    { async function isPasswordValid(password)
+        {
+            if (validator.isEmpty(password)) {
+                return { valid: false, msg: 'Password is required' };
+              }
+              const length = validator.isLength(password,8)
+              if(!length){
+                return { valid: false, msg: 'Password must be greater than 8 character ' };
+              }
+              if (!validator.isStrongPassword(password))
+              return {valid:false,msg:"Password must be a strong password..You should write:-(A combination of uppercase letters,lowercase letters,numbers,and symbols.)"};
+              
+              
+            
+              return { valid: true };
+        } 
+        let { valid, msg } = await isPasswordValid(password);    
+                if (!valid) {return res.status(400).send({ msg })};
 const secret = process.env.JWT_SECRET_KEY + user.password;
 try {
     jwt.verify(req.params.token, secret);
@@ -316,8 +393,7 @@ try {
     res.send({ msg:'Success a new password'});
 } catch (error) {
     res.json(error.message).status(403)
-}
-}
+}}}
 export async function callback(req, res) {
         if (req.user) {
             res.status(200).json({
