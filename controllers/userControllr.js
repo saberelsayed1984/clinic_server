@@ -244,7 +244,7 @@ if(!user.Verified){
         const token = await genrateJwt({email: user.email, id: user._id})
         await User.updateOne({_id:user._id }, {$set:{token}})
         user.token = token
-        return res.json({ status: httpStatusText.SUCCESS,  msg: "The success of the login process" ,  _id: user._id, name: user.Name, email : user.email });
+        return res.json({ status: httpStatusText.SUCCESS,  msg: "The success of the login process" ,  _id: user._id, name: user.Name, email : user.email ,token : user.token});
     } else {
         
         return res.status(500).json({ msg: "The password is incorrect" });
@@ -341,9 +341,9 @@ export async function forgotPassword(req, res, next) {
         }
     
     });
-    res.send({msg : 'please check your email'} )
+    res.send({msg : 'please check your email to reset password '} )
     }
-    
+
 /*export async function getResetPassword(req, res, next) {
     const user = await User.findById(req.params.userId);
     if (!user) {
