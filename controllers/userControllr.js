@@ -318,33 +318,33 @@ export async function forgotPassword(req, res, next) {
     const token = jwt.sign({ email: user.email, id: user.id}, secret, {
         expiresIn: '60m'
     });
-
-    // const mail = "team62024@outlook.com" ;
-    //  const pass ="yrbmmqddqvnzalii";
-    // const transporter = nodemailer.createTransport({
-    //     service: "hotmail",
-    //     auth: {
-    //         user: mail,
-    //         pass: pass,
-    //     }
-    // });
-    // const mailOption = {
-    //     from: '"Medi Team"<team62024@outlook.com>',
-    //     to: user.email,
-    //     subject: "Reset your password",
-    //     text: `Please click on the following link to reset your password: ${link}`
-    // }
-    // transporter.sendMail(mailOption, (error , success) =>{
-    //     if (error){
-    //         console.log(error);
-    //     }else{
-    //         console.log("email was sent: " + success.response)
-    //     }
-    
-    // });
     const link = `https://clinic-server-1.onrender.com/password/resetpassword/${user._id}/${token}`;
 
-    res.render('viwe-mail.ejs',{link:link})
+    const mail = "saberelsayed1984@gmail.com" ;
+     const pass ="izedhgpgnukwgpsn";
+    const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: mail,
+            pass: pass,
+        }
+    });
+    const mailOption = {
+        from: '"Medi Team"<team62024@outlook.com>',
+        to: user.email,
+        subject: "Reset your password",
+        text: `Please click on the following link to reset your password: ${link}`
+    }
+    transporter.sendMail(mailOption, (error , success) =>{
+        if (error){
+            console.log(error);
+        }else{
+            console.log("email was sent: " + success.response)
+        }
+    
+    });
+
+    res.render('viwe-mail.ejs',{link:link })
     }
 
 export async function getResetPassword(req, res, next) {
