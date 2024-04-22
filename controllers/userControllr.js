@@ -321,7 +321,6 @@ export async function forgotPassword(req, res, next) {
 
     const mail = "team62024@outlook.com" ;
      const pass ="yrbmmqddqvnzalii";
-    const link = `https://clinic-server-1.onrender.com/password/resetpassword/${user._id}/${token}`;
     const transporter = nodemailer.createTransport({
         service: "hotmail",
         auth: {
@@ -343,6 +342,8 @@ export async function forgotPassword(req, res, next) {
         }
     
     });
+    const link = `https://clinic-server-1.onrender.com/password/resetpassword/${user._id}/${token}`;
+
     res.render('viwe-mail.ejs',{link:link})
     }
 
