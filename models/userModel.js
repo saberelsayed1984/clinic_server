@@ -27,7 +27,7 @@ const userModel = new Schema ({
     confirmPassword:{
         type:String,
         trim: true, 
-        minlength:[8,"Name must be longer than 8 character "]
+        // minlength:[8,"Name must be longer than 8 character "]
     },
     Verified:{
         type:Boolean,

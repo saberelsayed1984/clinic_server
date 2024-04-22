@@ -31,7 +31,7 @@ export async function uplodePhoto(req, res) {
         return res.status(400).json({ msg: "File provided" });
     }
 
-    const imagePath = path.join(__dirname, `./image/${req.file.filename}`);
+    const imagePath = path.join(__dirname, `../image/${req.file.filename}`);
     const result = await cloudinaryUploadImage(imagePath);
 
     if (user.profilePhoto && user.profilePhoto.publicId !== null) {
@@ -289,8 +289,9 @@ export async function forgotPassword(req, res, next) {
             email: Joi.string().email().required()
         }).validate(req.body);
         if (error) {
-            return res.status(400).send({msg:'Enter a valid email address.'});
+            return res.status(400).render('error-mail.ejs');
         }   
+
         
         let email = req.body.email;
         { async function isEmailValid(email) {
@@ -318,7 +319,7 @@ export async function forgotPassword(req, res, next) {
     const token = jwt.sign({ email: user.email, id: user.id}, secret, {
         expiresIn: '60m'
     });
-    const link = `https://clinic-server-1.onrender.com/password/resetpassword/${user._id}/${token}`;
+    const link = `http://localhost:5000/password/resetpassword/${user._id}/${token}`;
 
     const mail = "saberelsayed1984@gmail.com" ;
      const pass ="izedhgpgnukwgpsn";
@@ -375,17 +376,17 @@ export async function resetPassword(req, res, next) {
               }
               const length = validator.isLength(password,8)
               if(!length){
-                return { valid: false, msg: 'Password must be greater than 8 character ' };
+                return { valid: false, msg: '<h1>Password must be greater than 8 character</h1> ' };
               }
               if (!validator.isStrongPassword(password))
-              return {valid:false,msg:"Password must be a strong password..You should write:-(A combination of uppercase letters,lowercase letters,numbers,and symbols.)"};
+              return {valid:false,msg:"<h1>Password must be a strong password..You should write:-(A combination of uppercase letters,lowercase letters,numbers,and symbols.)</h1>"};
               
               
             
               return { valid: true };
         } 
         let { valid, msg } = await isPasswordValid(password);    
-                if (!valid) {return res.status(400).send({ msg })};
+                if (!valid) {return res.status(400).render('error-pass.ejs')};
 const secret = process.env.JWT_SECRET_KEY + user.password;
 try {
     jwt.verify(req.params.token, secret);
