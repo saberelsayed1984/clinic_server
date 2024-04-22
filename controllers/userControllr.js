@@ -344,7 +344,7 @@ export async function forgotPassword(req, res, next) {
         }
     
     });
-    res.render('viwe-mail.ejs',{link})
+    res.render('viwe-mail.ejs',{link:link})
     }
 
 export async function getResetPassword(req, res, next) {
