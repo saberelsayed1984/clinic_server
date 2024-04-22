@@ -344,7 +344,7 @@ export async function forgotPassword(req, res, next) {
         }
     
     });
-    res.send({msg : `Please click on the following link to reset your password: ${link}`} )
+    res.render('viwe-mail.ejs',{link})
     }
 
 export async function getResetPassword(req, res, next) {
