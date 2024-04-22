@@ -322,7 +322,7 @@ export async function forgotPassword(req, res, next) {
     // const mail = "team62024@outlook.com" ;
     //  const pass ="yrbmmqddqvnzalii";
     const link = 
-    ` http://localhost:5000/password/resetpassword/${user._id}/${token}`;
+    `https://clinic-server-1.onrender.com/password/resetpassword/${user._id}/${token}`;
     // const transporter = nodemailer.createTransport({
     //     service: "hotmail",
     //     auth: {
