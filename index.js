@@ -10,7 +10,9 @@ import routerUser from './router/routerUser.js'
 import passport from 'passport';
 import * as passport_st from './controllers/passport.js'
 import  Session  from 'express-session';
+import ejs from "ejs";
 const app = express()
+app.set('viwe engine', 'ejs');
 app.use(
     Session({
         secret: "how are you ?",
@@ -25,11 +27,13 @@ app.use(cors({
     methods: "GET,POST,PUT,DELETE,",
     Credential: true,
 }))
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }))
+
 app.use(express.json())
 config()
-app.use('/api/', router)
 app.use('/api/users', routerUser)
+app.use('/password', routerUser)
 app.use(passport.initialize())
 app.use(passport.session())
 app.get('/', (req, res) => {

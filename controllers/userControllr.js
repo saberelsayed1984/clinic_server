@@ -281,6 +281,9 @@ export async function deleteUser(req, res) {
         await User.deleteOne ({_id: req.params.userId});
         res.status(200).json({status: httpStatusText.SUCCESS,  msg: null});
     };
+export  function getForgotPassword(req, res, next) {
+    res.render('forgot-password.ejs')
+}
 export async function forgotPassword(req, res, next) {
         const { error } = Joi.object({
             email: Joi.string().email().required()
@@ -319,7 +322,7 @@ export async function forgotPassword(req, res, next) {
     const mail = "team62024@outlook.com" ;
      const pass ="yrbmmqddqvnzalii";
     const link = 
-    `https://clinic-server-1.onrender.com/api/users/resetpassword/${user._id}/${token}`;
+    `https://clinic-server-1.onrender.com/password/resetpassword/${user._id}/${token}`;
     const transporter = nodemailer.createTransport({
         service: "hotmail",
         auth: {
@@ -341,10 +344,10 @@ export async function forgotPassword(req, res, next) {
         }
     
     });
-    res.send({msg : 'please check your email to reset password '} )
+    res.send({msg : `Please click on the following link to reset your password: ${link}`} )
     }
 
-/*export async function getResetPassword(req, res, next) {
+export async function getResetPassword(req, res, next) {
     const user = await User.findById(req.params.userId);
     if (!user) {
         return res.status(404).send( {msg:'User not found'});
@@ -353,11 +356,11 @@ export async function forgotPassword(req, res, next) {
 const secret = process.env.JWT_SECRET_KEY + user.password;
 try {
     jwt.verify(req.params.token, secret);
-    res.status(200).send({email: user.email,  msg: 'Reset the password'});
+    res.render('reset-password.ejs',{email: user.email})
 } catch (error) {
     res.json(error.message).status(403)
 }
-;}*/
+;}
 export async function resetPassword(req, res, next) {
     const user = await User.findById(req.params.userId);
     const password = req.body.password;
@@ -390,7 +393,7 @@ try {
     req.body.password = await bcrypt.hash(req.body.password, salt);
     user.password = req.body.password;
     await user.save();
-    res.send({ msg:'Success a new password'});
+    res.render('success-password.ejs');
 } catch (error) {
     res.json(error.message).status(403)
 }}}

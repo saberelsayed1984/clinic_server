@@ -5,6 +5,9 @@ import passport from 'passport';
 import photoUplode from './photoUplode.js';
 
 const router = express.Router();
+router.route('/forgot-password')
+        .get(userControllr.getForgotPassword)
+        .post(userControllr.forgotPassword)
 router.route('/register')
         .post(userControllr.register);
 router.route('/verifyEmail/:userId/:token')
@@ -15,7 +18,7 @@ router.route('/login')
 router.route('/forgotpassword')
         .post( userControllr.forgotPassword);
 router.route('/resetpassword/:userId/:token')
-       // .get(userControllr.getResetPassword)
+        .get(userControllr.getResetPassword)
         .post(userControllr.resetPassword);        
 router.route('/:userId')
         .put(userControllr.update);
