@@ -319,7 +319,7 @@ export async function forgotPassword(req, res, next) {
     const token = jwt.sign({ email: user.email, id: user.id}, secret, {
         expiresIn: '60m'
     });
-    const link = `http://localhost:5000/password/resetpassword/${user._id}/${token}`;
+    const link = `https://clinic-server-1.onrender.com/password/resetpassword/${user._id}/${token}`;
 
     const mail = "saberelsayed1984@gmail.com" ;
      const pass ="izedhgpgnukwgpsn";
