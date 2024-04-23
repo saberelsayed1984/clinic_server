@@ -1,9 +1,9 @@
 import passport from 'passport';
-import User from '../models/userModel.js';
-import httpStatusText from '../utlits/httpStatus.js';
+import User from './models/userModel.js';
+import httpStatusText from './utlits/httpStatus.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import genrateJwt from '../utlits/genrateJwt.js';
+import genrateJwt from './utlits/genrateJwt.js';
 import nodemailer from "nodemailer";
 import Joi from "joi";
 import emailValidator from 'email-validator';
@@ -13,11 +13,11 @@ import path from "path";
 import multer from "multer";
 import cloudinary from 'cloudinary';
 import fs from "fs";
-import {cloudinaryUploadImage,cloudinaryRemoveImage} from "../utlits/cloudinary.js";
+import {cloudinaryUploadImage,cloudinaryRemoveImage} from "./utlits/cloudinary.js";
 import { error } from 'console';
 import { create } from 'domain';
 const __filename = path.basename(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = path.dirname(__filename);// console.log(__dirname);
 export async function uplodePhoto(req, res) {
     const userId = req.params.id;
     const user = await User.findById(userId);
@@ -31,9 +31,11 @@ export async function uplodePhoto(req, res) {
         return res.status(400).json({ msg: "File provided" });
     }
 
-    const imagePath = path.join(__dirname, `../image/${req.file.filename}`);
-    const result = await cloudinaryUploadImage(imagePath);
+    const imagePath = path.join(__dirname, `./image/${req.file.filename}`);
+    console.log(imagePath);
 
+    const result = await cloudinaryUploadImage(imagePath);
+console.log(result);
     if (user.profilePhoto && user.profilePhoto.publicId !== null) {
         await cloudinaryRemoveImage(user.profilePhoto.publicId);
     }
@@ -41,7 +43,7 @@ export async function uplodePhoto(req, res) {
     user.profilePhoto = {
         url: result.secure_url,
         publicId: result.public_id,
-    };
+    }; 
 
     await user.save(); // Save the user's changes first
 
@@ -244,7 +246,8 @@ if(!user.Verified){
         const token = await genrateJwt({email: user.email, id: user._id})
         await User.updateOne({_id:user._id }, {$set:{token}})
         user.token = token
-        return res.json({ status: httpStatusText.SUCCESS,  msg: "The success of the login process" ,  _id: user._id, name: user.Name, email : user.email ,token : user.token});
+        return res.json({ status: httpStatusText.SUCCESS,  msg: "The success of the login process" ,  _id: user._id, name: user.Name, email : user.email ,token : user.token,profilePhoto: user.profilePhoto.url
+    });
     } else {
         
         return res.status(500).json({ msg: "The password is incorrect" });
@@ -281,15 +284,15 @@ export async function deleteUser(req, res) {
         await User.deleteOne ({_id: req.params.userId});
         res.status(200).json({status: httpStatusText.SUCCESS,  msg: null});
     };
-export  function getForgotPassword(req, res, next) {
-    res.render('forgot-password.ejs')
-}
+// export  function getForgotPassword(req, res, next) {
+//     res.render('forgot-password.ejs')
+// }
 export async function forgotPassword(req, res, next) {
         const { error } = Joi.object({
             email: Joi.string().email().required()
         }).validate(req.body);
         if (error) {
-            return res.status(400).render('error-mail.ejs');
+            return res.status(400).send({msg:'Enter a valid email address.'});
         }   
 
         
@@ -345,7 +348,7 @@ export async function forgotPassword(req, res, next) {
     
     });
 
-    res.render('viwe-mail.ejs',{link:link })
+    res.send({msg : 'check mail... '} )
     }
 
 export async function getResetPassword(req, res, next) {

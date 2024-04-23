@@ -3,10 +3,11 @@ import multer from "multer";
 
 const __filename = path.basename(import.meta.url);
 const __dirname = path.dirname(__filename);
+console.log(__dirname);
 
 const photoStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "/image"));
+    cb(null, path.join(__dirname, "image"));
     },
     filename: function (req, file, cb) {
     if (file) {

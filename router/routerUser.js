@@ -1,12 +1,12 @@
 import express from 'express';
-import * as userControllr from '../controllers/userControllr.js';
+import * as userControllr from '../userControllr.js';
 import verifyToken from '../models/verifyToken.js';
 import passport from 'passport';
 import photoUplode from './photoUplode.js';
 
 const router = express.Router();
 router.route('/forgot-password')
-        .get(userControllr.getForgotPassword)
+        // .get(userControllr.getForgotPassword)
         .post(userControllr.forgotPassword)
 router.route('/register')
         .post(userControllr.register);
