@@ -32,10 +32,8 @@ export async function uplodePhoto(req, res) {
     }
 
     const imagePath = path.join(__dirname, `./image/${req.file.filename}`);
-    console.log(imagePath);
 
     const result = await cloudinaryUploadImage(imagePath);
-console.log(result);
     if (user.profilePhoto && user.profilePhoto.publicId !== null) {
         await cloudinaryRemoveImage(user.profilePhoto.publicId);
     }
