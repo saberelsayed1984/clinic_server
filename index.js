@@ -13,6 +13,7 @@ import  Session  from 'express-session';
 import ejs from "ejs";
 const app = express()
 app.set('viwe engine', 'ejs');
+// app.use(fileUpload());
 app.use(
     Session({
         secret: "how are you ?",

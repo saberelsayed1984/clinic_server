@@ -403,19 +403,19 @@ export async function newPassword(req, res) {
     const user = await User.findById(req.params.userId);
     
     if (!user) {
-        return res.status(404).json({ msg: 'User not found' });
+        return res.status(404).json({ message: 'User not found' });
     }
     
     const { oldPassword, password} = req.body;
     
     if (!oldPassword || !password ) {
-        return res.status(400).json({ msg: 'Old password, new password is missing in the request body' });
+        return res.status(400).json({ message: 'Old password, new password is missing in the request body' });
     }
 
     const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
     
     if (!isPasswordMatch) {
-        return res.status(401).json({ match: false, msg: 'Old password does not match ' });
+        return res.status(401).json({ match: false, message: 'Old password does not match ' });
     }
 
     function isPasswordValid(password) {
@@ -443,7 +443,7 @@ try {
     req.body.password = await bcrypt.hash(req.body.password, salt);
     user.password = req.body.password;
     await user.save();
-    res.json({msg:'success reset password'});
+    res.json('success reset password');
 } catch (error) {
     res.json(error.message).status(403)
 }}
