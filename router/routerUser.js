@@ -6,7 +6,6 @@ import photoUplode from './photoUplode.js';
 
 const router = express.Router();
 router.route('/forgot-password')
-        // .get(userControllr.getForgotPassword)
         .post(userControllr.forgotPassword)
 router.route('/register')
         .post(userControllr.register);
@@ -23,9 +22,11 @@ router.route('/resetpassword/:userId/:token')
 router.route('/:userId')
         .put(userControllr.update);
 router.route('/:userId')
+        .post(userControllr.newPassword);
+router.route('/:userId')
         .delete(userControllr.deleteUser)    
-router.get("/google",  passport.authenticate("google",{scope:["email","profile"]}))
-router.get("/google/callback", passport.authenticate("google"), userControllr.callback)
+// router.get("/google",  passport.authenticate("google",{scope:["email","profile"]}))
+// router.get("/google/callback", passport.authenticate("google"), userControllr.callback)
 export default router;
 
 

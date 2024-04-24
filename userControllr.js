@@ -399,14 +399,51 @@ try {
 } catch (error) {
     res.json(error.message).status(403)
 }}}
-export async function callback(req, res) {
-        if (req.user) {
-            res.status(200).json({
-                error: false,
-                msg: "Successfully loged in",
-                user: req.user,
-            });
-        } else {
-            res.status(403).json({ error: true,  msg: "Not authorized" });
+export async function newPassword(req, res) {
+    const user = await User.findById(req.params.userId);
+    
+    if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+    }
+    
+    const { oldPassword, password} = req.body;
+    
+    if (!oldPassword || !password ) {
+        return res.status(400).json({ message: 'Old password, new password is missing in the request body' });
+    }
+
+    const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+    
+    if (!isPasswordMatch) {
+        return res.status(401).json({ match: false, message: 'Old password does not match the one in the database' });
+    }
+
+    function isPasswordValid(password) {
+        if (validator.isEmpty(password)) {
+            return { valid: false, msg: 'Password is required' };
         }
+        if (!validator.isLength(password, { min: 8 })) {
+            return { valid: false, msg: 'Password must be at least 8 characters long' };
         }
+        if (!validator.isStrongPassword(password)) {
+            return { valid: false, msg: 'Password must be a strong password (uppercase, lowercase, numbers, symbols)' };
+        }
+        return { valid: true };
+    }
+
+    const { valid, msg } = isPasswordValid(password);
+
+    if (!valid) {
+        return res.status(400).json({ message: msg });
+    }
+// const secret = process.env.JWT_SECRET_KEY + user.password;
+try {
+    // jwt.verify(req.params.token, secret);
+    const salt = await bcrypt.genSalt(10);
+    req.body.password = await bcrypt.hash(req.body.password, salt);
+    user.password = req.body.password;
+    await user.save();
+    res.send('success reset password');
+} catch (error) {
+    res.json(error.message).status(403)
+}}
