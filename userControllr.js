@@ -443,7 +443,7 @@ try {
     req.body.password = await bcrypt.hash(req.body.password, salt);
     user.password = req.body.password;
     await user.save();
-    res.send('success reset password');
+    res.json('success reset password');
 } catch (error) {
     res.json(error.message).status(403)
 }}
