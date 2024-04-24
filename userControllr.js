@@ -415,7 +415,7 @@ export async function newPassword(req, res) {
     const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
     
     if (!isPasswordMatch) {
-        return res.status(401).json({ match: false, message: 'Old password does not match the one in the database' });
+        return res.status(401).json({ match: false, message: 'Old password does not match ' });
     }
 
     function isPasswordValid(password) {
