@@ -7,27 +7,27 @@ console.log(__dirname);
 
 const photoStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "image"));
+        cb(null, path.join(__dirname, "image"));
     },
     filename: function (req, file, cb) {
-    if (file) {
-        cb(null, new Date().toISOString().replace(/:/g, "-") + file.originalname);
-    } else {
-        cb(null, false);
-    }
+        if (file) {
+            cb(null, new Date().toISOString().replace(/:/g, "-") + file.originalname);
+        } else {
+            cb(null, false);
+        }
     },
-    });
+});
 
-    const photoUplode = multer({
+const photoUpload = multer({
     storage: photoStorage,
     fileFilter: function (req, file, cb) {
-    if (file.mimetype.startsWith("image")) {
-        cb(null, true);
-    } else {
-        cb({ message: "unsupported file format" }, false);
-    }
+        if (file.originalname.match(/\.(jpg|png|PNG|jpeg)$/)) {
+            cb(null, true);
+        } else {
+            cb({ message: "unsupported file format" }, false);
+        }
     },
     limits: { fileSize: 1024 * 1024 * 5 },
-    });
+});
 
-    export default photoUplode;
+export default photoUpload;

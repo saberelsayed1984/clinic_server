@@ -2,7 +2,7 @@ import express from 'express';
 import * as userControllr from '../userControllr.js';
 import verifyToken from '../models/verifyToken.js';
 import passport from 'passport';
-import photoUplode from './photoUplode.js';
+import photoUpload from './photoUplode.js';
 
 const router = express.Router();
 router.route('/forgot-password')
@@ -11,7 +11,7 @@ router.route('/register')
         .post(userControllr.register);
 router.route('/verifyEmail/:userId/:token')
         .get(userControllr.verifyEmail);
-router.post('/uplodePhoto/:id', photoUplode.single("image"), userControllr.uplodePhoto);
+router.post('/uplodePhoto/:id', photoUpload.single('image'), userControllr.uplodePhoto);
 router.route('/login')
         .post( userControllr.login);
 router.route('/forgotpassword')
