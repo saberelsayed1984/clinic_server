@@ -151,12 +151,12 @@ let { valid, msg } = await isNameValid(Name);
     const token = await genrateJwt({email: newUser.email, id: newUser._id})
     newUser.token = token;
     await newUser.save();
-     const mail = "team62024@outlook.com" ;
-     const pass ="yrbmmqddqvnzalii";
+    const mail = "saberelsayed1984@gmail.com" ;
+     const pass ="izedhgpgnukwgpsn";
     const link = 
     `https://clinic-server-1.onrender.com/api/users/verifyEmail/${newUser._id}/${token}`;
     const transporter = nodemailer.createTransport({
-        service: "hotmail",
+        service: "gmail",
         auth: {
             user: mail ,
             pass: pass
