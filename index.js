@@ -35,8 +35,8 @@ app.use(express.json())
 config()
 app.use('/api/users', routerUser)
 app.use('/password', routerUser)
-app.use(passport.initialize())
-app.use(passport.session())
+// app.use(passport.initialize())
+// app.use(passport.session())
 app.get('/', (req, res) => {
     app.use((error, req, res, next) => {
         res.status(error.statusCode || 500).json({status: error.statusText || httpStatusText.ERROR,
