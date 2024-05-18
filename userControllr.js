@@ -148,7 +148,7 @@ if (!valid) {return res.status(400).send({msg })};
     const mail = "saberelsayed1984@gmail.com" ;
     const pass ="izedhgpgnukwgpsn";
     const link = 
-    `https://clinic-server-1.onrender.com/api/users/verifyEmail/${newUser._id}/${token}`;
+    `https://clinicserver-production.up.railway.app/api/users/verifyEmail/${newUser._id}/${token}`;
     const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -308,7 +308,7 @@ let email = req.body.email;
     const token = jwt.sign({ email: user.email, id: user.id}, secret, {
         expiresIn: '60m'
     });
-    const link = `https://clinic-server-1.onrender.com/password/resetpassword/${user._id}/${token}`;
+    const link = `https://clinicserver-production.up.railway.app/password/resetpassword/${user._id}/${token}`;
 
     const mail = "saberelsayed1984@gmail.com" ;
     const pass ="izedhgpgnukwgpsn";
