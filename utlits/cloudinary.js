@@ -4,14 +4,15 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_NAME,
-    api_key: process.env.CLOUDINARY_API,
-    api_secret: process.env.CLOUDINARY_SECRET,
+    cloud_name: 'dqz8cwkra',
+    api_key: '325158755357776',
+    api_secret: 'kwvEOdrfzcjCKxhFmMgUak458A8',
     });
 
     const cloudinaryUploadImage = async (fileToUpload) => {
     try {
-        const data = await cloudinary.uploader.upload(fileToUpload, {
+        const data = await cloudinary.uploader
+        .upload(fileToUpload, {
         resource_type: 'auto',
         });
         return data;
@@ -22,7 +23,8 @@ cloudinary.config({
 
     const cloudinaryRemoveImage = async (imagePublicId) => {
     try {
-        const result = await cloudinary.uploader.destroy(imagePublicId);
+        const result = await cloudinary.uploader
+        .destroy(imagePublicId);
         return result;
     } catch (error) {
         throw error;

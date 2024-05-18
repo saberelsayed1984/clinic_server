@@ -1,4 +1,3 @@
-import passport from 'passport';
 import User from './models/userModel.js';
 import httpStatusText from './utlits/httpStatus.js';
 import bcrypt from 'bcrypt';
@@ -43,8 +42,7 @@ export async function uplodePhoto(req, res) {
         publicId: result.public_id,
     }; 
 
-    await user.save(); // Save the user's changes first
-
+    await user.save(); 
     res.status(200).json({
         msg: "successfully Upload",
         profilePhoto: { url: result.secure_url, publicId: result.public_id },
@@ -65,11 +63,11 @@ export async function register(req, res, next)  {
             return res.status(400).send( {msg:'The name is already in use.'});
         } 
 
-  { 
-     async function isconfirmPasswordValid(confirmPassword){
-    if (validator.isEmpty(confirmPassword)) {
-        return { valid: false, msg: 'confirmPassword is required' };
-      }
+{ 
+    async function isconfirmPasswordValid(confirmPassword){
+if (validator.isEmpty(confirmPassword)) {
+    return { valid: false, msg: 'confirmPassword is required' };
+    }
 
     if(password != confirmPassword )
     {
@@ -83,76 +81,72 @@ let { valid, msg } = await isconfirmPasswordValid(confirmPassword);
 
     
 {
-    async function isNameValid(Name)
+async function isNameValid(Name)
 {
-    if (validator.isEmpty(Name)) {
-        return { valid: false, msg: 'Name is required' };
-      }
-      const length = validator.isLength(Name,3)
-      if(!length){
-        return { valid: false, msg: 'Name must be greater than 3 character ' };
-      }
-     else{ return { valid: true };
+if (validator.isEmpty(Name)) {
+    return { valid: false, msg: 'Name is required' };
+    }
+    const length = validator.isLength(Name,3)
+    if(!length){
+    return { valid: false, msg: 'Name must be greater than 3 character ' };
+    }
+    else{ return { valid: true };
 }} 
 let { valid, msg } = await isNameValid(Name);    
-        if (!valid) {return res.status(400).send({ msg })};
+    if (!valid) {return res.status(400).send({ msg })};
 
-    }  
-     { async function isPasswordValid(password)
-    {
-        if (validator.isEmpty(password)) {
-            return { valid: false, msg: 'Password is required' };
-          }
-          const length = validator.isLength(password,8)
-          if(!length){
-            return { valid: false, msg: 'Password must be greater than 8 character ' };
-          }
-          if (!validator.isStrongPassword(password))
-          return {valid:false,msg:"Password must be a strong password..You should write:-(A combination of uppercase letters,lowercase letters,numbers,and symbols.)"};
-          
-        
-          return { valid: true };
+}  
+{ async function isPasswordValid(password)
+{
+if (validator.isEmpty(password)) {
+    return { valid: false, msg: 'Password is required' };
+    }
+    const length = validator.isLength(password,8)
+    if(!length){
+    return { valid: false, msg: 'Password must be greater than 8 character ' };
+    }
+    if (!validator.isStrongPassword(password))
+    return {valid:false,msg:"Password must be a strong password..You should write:-(A combination of uppercase letters,lowercase letters,numbers,and symbols.)"};
+    
+
+    return { valid: true };
+} 
+let { valid, msg } = await isPasswordValid(password);    
+    if (!valid) {return res.status(400).send({ msg })};
+}
+{ async function isEmailValid(email) {
+
+    if (validator.isEmpty(email)) {
+        return { valid: false, msg: 'Email is required' };
+        }
+    const isValid = emailValidator.validate(email);
+    if (!isValid) {
+        return { valid: false,msg: 'Enter a valid email address.' };
+    }
+    const emailParts = email.split('@');
+    if (emailParts.length !== 2 || emailParts[1] !== 'gmail.com') {
+        return { valid: false, msg: 'Only gmail addresses are allowed' };
+    }
+    return { valid: true };
     } 
-    let { valid, msg } = await isPasswordValid(password);    
-            if (!valid) {return res.status(400).send({ msg })};
-    }
-   { async function isEmailValid(email) {
-
-        if (validator.isEmpty(email)) {
-            return { valid: false, msg: 'Email is required' };
-          }
-        const isValid = emailValidator.validate(email);
-        if (!isValid) {
-          return { valid: false,msg: 'Enter a valid email address.' };
-        }
-        const emailParts = email.split('@');
-        if (emailParts.length !== 2 || emailParts[1] !== 'gmail.com') {
-          return { valid: false, msg: 'Only gmail addresses are allowed' };
-        }
-        return { valid: true };
-      } 
-      const { valid, msg } = await isEmailValid(email);    
-    if (!valid) {return res.status(400).send({msg })};
-    }
+    const { valid, msg } = await isEmailValid(email);    
+if (!valid) {return res.status(400).send({msg })};
+}
     
 
-    // password hashing by bcrypt package
     const hashedPassword = await bcrypt.hash(password, 10);
-
-       
-    
     const newUser = new User({
         Name,
         email,
         password: hashedPassword,
         token : bcrypt
     }); 
-  
+
     const token = await genrateJwt({email: newUser.email, id: newUser._id})
     newUser.token = token;
     await newUser.save();
     const mail = "saberelsayed1984@gmail.com" ;
-     const pass ="izedhgpgnukwgpsn";
+    const pass ="izedhgpgnukwgpsn";
     const link = 
     `https://clinic-server-1.onrender.com/api/users/verifyEmail/${newUser._id}/${token}`;
     const transporter = nodemailer.createTransport({
@@ -176,9 +170,7 @@ let { valid, msg } = await isNameValid(Name);
         }
     
     }); 
-   // res.json({ status: httpStatusText.SUCCESS,msg: "The success of the registration process"});
     res.send({msg : 'register sucessfully... please check your email to verify your account. '} )
-   
 };
 
 export async function verifyEmail(req,res,next) {
@@ -195,10 +187,10 @@ export async function verifyEmail(req,res,next) {
 
     res.json({ status: httpStatusText.SUCCESS,msg: "email verified sucessfully"});
     }
-     catch (error) {
-        res.json(error.message).status(500);
+    catch (error) {
+    res.json(error.message).status(500);
 
-     }
+    }
 }
 export async function login(req, res, next)  {
     
@@ -216,24 +208,24 @@ export async function login(req, res, next)  {
 
     }
 
-    { async function isEmailValid(email) {
+{ async function isEmailValid(email) {
 
-        if (validator.isEmpty(email)) {
-            return { valid: false, msg: 'Email is required' };
-          }
-        const isValid = emailValidator.validate(email);
-        if (!isValid) {
-          return { valid: false,msg: 'Enter a valid email address.' };
+    if (validator.isEmpty(email)) {
+        return { valid: false, msg: 'Email is required' };
         }
-        const emailParts = email.split('@');
-        if (emailParts.length !== 2 || emailParts[1] !== 'gmail.com') {
-          return { valid: false, msg: 'Only gmail addresses are allowed' };
-        }
-        return { valid: true };
-      } 
-      const { valid, msg } = await isEmailValid(email);    
-    if (!valid) {return res.status(400).send({msg })};
+    const isValid = emailValidator.validate(email);
+    if (!isValid) {
+        return { valid: false,msg: 'Enter a valid email address.' };
     }
+    const emailParts = email.split('@');
+    if (emailParts.length !== 2 || emailParts[1] !== 'gmail.com') {
+        return { valid: false, msg: 'Only gmail addresses are allowed' };
+    }
+    return { valid: true };
+    } 
+    const { valid, msg } = await isEmailValid(email);    
+if (!valid) {return res.status(400).send({msg })};
+}
 
 if(!user.Verified){
     return res.status(400).json({  msg: " An Email was sent to your account please verify " });
@@ -260,12 +252,12 @@ export async function update(req, res)  {
     {
         if (validator.isEmpty(Name)) {
             return { valid: false, msg: 'Name is required' };
-          }
-          const length = validator.isLength(Name,3)
-          if(!length){
-            return { valid: false, msg: 'Name must be greater than 3 character ' };
-          }
-         else{ return { valid: true };
+        }
+        const length = validator.isLength(Name,3)
+        if(!length){
+        return { valid: false, msg: 'Name must be greater than 3 character ' };
+        }
+        else{ return { valid: true };
     }} 
     let { valid, msg } = await isNameValid(Name);    
             if (!valid) {return res.status(400).send({ msg })};
@@ -282,9 +274,7 @@ export async function deleteUser(req, res) {
         await User.deleteOne ({_id: req.params.userId});
         res.status(200).json({status: httpStatusText.SUCCESS,  msg: null});
     };
-// export  function getForgotPassword(req, res, next) {
-//     res.render('forgot-password.ejs')
-// }
+
 export async function forgotPassword(req, res, next) {
         const { error } = Joi.object({
             email: Joi.string().email().required()
@@ -292,29 +282,27 @@ export async function forgotPassword(req, res, next) {
         if (error) {
             return res.status(400).send({msg:'Enter a valid email address.'});
         }   
-
-        
-        let email = req.body.email;
+let email = req.body.email;
         { async function isEmailValid(email) {
 
-            if (validator.isEmpty(email)) {
-                return { valid: false, msg: 'Email is required' };
-              }
-            const isValid = emailValidator.validate(email);
-            if (!isValid) {
-              return { valid: false,msg: 'Enter a valid email address.' };
+        if (validator.isEmpty(email)) {
+            return { valid: false, msg: 'Email is required' };
             }
-            const emailParts = email.split('@');
-            if (emailParts.length !== 2 || emailParts[1] !== 'gmail.com') {
-              return { valid: false, msg: 'Only gmail addresses are allowed' };
-            }
-            return { valid: true };
-          } 
-          const { valid, msg } = await isEmailValid(email);    
-        if (!valid) {return res.status(400).send({msg })};
-        }const user = await User.findOne({email: req.body.email});
-        if (!user) {
-            return res.status(404).send( {msg:'User not found'});
+        const isValid = emailValidator.validate(email);
+        if (!isValid) {
+            return { valid: false,msg: 'Enter a valid email address.' };
+        }
+        const emailParts = email.split('@');
+        if (emailParts.length !== 2 || emailParts[1] !== 'gmail.com') {
+            return { valid: false, msg: 'Only gmail addresses are allowed' };
+        }
+        return { valid: true };
+        } 
+        const { valid, msg } = await isEmailValid(email);    
+    if (!valid) {return res.status(400).send({msg })};
+    }const user = await User.findOne({email: req.body.email});
+    if (!user) {
+        return res.status(404).send( {msg:'User not found'});
         }
     const secret = process.env.JWT_SECRET_KEY + user.password;
     const token = jwt.sign({ email: user.email, id: user.id}, secret, {
@@ -323,7 +311,7 @@ export async function forgotPassword(req, res, next) {
     const link = `https://clinic-server-1.onrender.com/password/resetpassword/${user._id}/${token}`;
 
     const mail = "saberelsayed1984@gmail.com" ;
-     const pass ="izedhgpgnukwgpsn";
+    const pass ="izedhgpgnukwgpsn";
     const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -374,17 +362,17 @@ export async function resetPassword(req, res, next) {
         {
             if (validator.isEmpty(password)) {
                 return { valid: false, msg: 'Password is required' };
-              }
-              const length = validator.isLength(password,8)
-              if(!length){
-                return { valid: false, msg: '<h1>Password must be greater than 8 character</h1> ' };
-              }
-              if (!validator.isStrongPassword(password))
-              return {valid:false,msg:"<h1>Password must be a strong password..You should write:-(A combination of uppercase letters,lowercase letters,numbers,and symbols.)</h1>"};
-              
-              
+            }
+            const length = validator.isLength(password,8)
+            if(!length){
+            return { valid: false, msg: '<h1>Password must be greater than 8 character</h1> ' };
+            }
+            if (!validator.isStrongPassword(password))
+            return {valid:false,msg:"<h1>Password must be a strong password..You should write:-(A combination of uppercase letters,lowercase letters,numbers,and symbols.)</h1>"};
             
-              return { valid: true };
+            
+        
+            return { valid: true };
         } 
         let { valid, msg } = await isPasswordValid(password);    
                 if (!valid) {return res.status(400).render('error-pass.ejs')};

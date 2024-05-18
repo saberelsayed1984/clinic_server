@@ -10,7 +10,6 @@ const userModel = new Schema ({
         trim: true,
         minlength:[3,"Name must be longer than 3 character "],
         unique: true
-       
     },
     email: {
         type:String,
@@ -27,7 +26,6 @@ const userModel = new Schema ({
     confirmPassword:{
         type:String,
         trim: true, 
-        // minlength:[8,"Name must be longer than 8 character "]
     },
     Verified:{
         type:Boolean,
