@@ -53,4 +53,4 @@ connect().then(() => {
     } }).catch(error => {
         console.log("Invalid Database connection")
     })
-const port = 5000;
+const port = process.env.PORT;
