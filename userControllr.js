@@ -304,7 +304,7 @@ let email = req.body.email;
     if (!user) {
         return res.status(404).send( {msg:'User not found'});
         }
-    const secret = process.env.JWT_SECRET_KEY + user.password;
+    const secret = '2c7907f7311afea77350f88292059910fbcd907f57c9d9c19d15fe37c4cc8e3b' + user.password;
     const token = jwt.sign({ email: user.email, id: user.id}, secret, {
         expiresIn: '60m'
     });
@@ -343,7 +343,7 @@ export async function getResetPassword(req, res, next) {
         return res.status(404).send( {msg:'User not found'});
 
     }
-const secret = process.env.JWT_SECRET_KEY + user.password;
+const secret = '2c7907f7311afea77350f88292059910fbcd907f57c9d9c19d15fe37c4cc8e3b' + user.password;
 try {
     jwt.verify(req.params.token, secret);
     res.render('reset-password.ejs',{email: user.email})
@@ -376,7 +376,7 @@ export async function resetPassword(req, res, next) {
         } 
         let { valid, msg } = await isPasswordValid(password);    
                 if (!valid) {return res.status(400).render('error-pass.ejs')};
-const secret = process.env.JWT_SECRET_KEY + user.password;
+const secret = '2c7907f7311afea77350f88292059910fbcd907f57c9d9c19d15fe37c4cc8e3b' + user.password;
 try {
     jwt.verify(req.params.token, secret);
     const salt = await bcrypt.genSalt(10);
