@@ -14,15 +14,15 @@ import ejs from "ejs";
 const app = express()
 app.set('viwe engine', 'ejs');
 // app.use(fileUpload());
-app.use(
-    Session({
-        secret: "how are you ?",
-        resave: false,
-    saveUninitialized: true,
-    cookie: { secure: true }
-    })
-);
-app.use(morgan('tiny'))
+// app.use(
+//     Session({
+//         secret: "how are you ?",
+//         resave: false,
+//     saveUninitialized: true,
+//     cookie: { secure: true }
+//     })
+// );
+// app.use(morgan('tiny'))
 app.use(cors({
     origin: "*",
     methods: "GET,POST,PUT,DELETE,",
